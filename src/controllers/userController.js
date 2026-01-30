@@ -14,7 +14,7 @@ export const signUp = async (req,res) => {
             })
         }
 
-        const existingUser = await User.find(email);
+        const existingUser = await User.findOne({email});
         if(existingUser){
             return res.json({
                 success:false,
@@ -50,10 +50,14 @@ export const signUp = async (req,res) => {
 
 export const login = async (req,res) => {
     try {
-        
-    } catch (error) {
 
         const {email , password} = req.body;
+
+        if(!password || !email){
+            return res.json({success:false,
+                message:"insufficiant creds"
+            })
+        }
 
         const user = await User.findOne({email})
 
@@ -65,6 +69,13 @@ export const login = async (req,res) => {
         }
 
         const isPasswordCorrect = await bcrypt.compare(password , user.password)
+
+        if(!isPasswordCorrect){
+            return res.json({
+                success:false,
+                message:"incorrect password"
+            })
+        }
 
         const token = jwt.sign(
             {id: user._id},
@@ -81,6 +92,8 @@ export const login = async (req,res) => {
                 email:user.email
             }
          })
+        
+    } catch (error) {
 
         return res.json({
             success:false,
