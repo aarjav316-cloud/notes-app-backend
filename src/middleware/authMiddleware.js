@@ -1,16 +1,15 @@
 import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+import User from "../models/userSchema.js";
 
 const protect = async (req, res, next) => {
   let token;
 
-  // check Authorization header
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
   ) {
     try {
-      // get token from header
+     
       token = req.headers.authorization.split(" ")[1];
 
       // verify token

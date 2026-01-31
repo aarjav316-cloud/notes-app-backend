@@ -3,6 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import connectDb from './config/db.js'
 import errorHandler from './middleware/errorMiddleware.js'
+import notesRoutes from './routes/noteRoute.js'
 
 dotenv.config()
 
@@ -18,6 +19,7 @@ app.get('/' , (req,res) => {
 } )
 
 app.use(errorHandler)
+app.use("/api/notes" , notesRoutes);
 
 
 const PORT = process.env.PORT || 5000;
