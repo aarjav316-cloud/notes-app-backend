@@ -33,17 +33,29 @@ export const createNote = async (req,res) => {
 export const getNotes = async (req,res) => {
     try {
 
-        const allNotes = await Note.find({
-            user: req.user._id
-        }).sort({
-            createdAt: -1
-        });
+        const {search , tag , page = 1, limit = 5} = req.query
 
-        return res.json({
-            success:true,
-            message:"your notes",
-            allNotes
-        })
+        let query = {
+            user:req.user._id
+        }
+
+        if(search){
+            query.$or = [
+                {title : {$regex:search, $options: "i"}},
+                {content: {$regex:search, $options: "i"}}
+            ];
+        }
+
+        if(tag) {
+            query.tags = tag
+        }
+
+        const notes = await Note.find(query)
+      .sort({ createdAt: -1 })
+      .skip((Number(page) - 1) * Number(limit))
+      .limit(Number(limit));
+
+       res.json(notes);
         
     } catch (error) {
         return res.json({
@@ -122,5 +134,10 @@ export const deleteNotes = async (req,res) => {
         })
     }
 }
+
+
+
+
+
 
 
