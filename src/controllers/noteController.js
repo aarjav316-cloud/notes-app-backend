@@ -88,3 +88,39 @@ export const updatedNotes = async(req,res) => {
     }
 }
 
+export const deleteNotes = async (req,res) => {
+    try {
+
+        const note = await Note.findById(req.params.id)
+
+        if(!note) {
+            return res.json({
+                success:false,
+                message:"notes not found"
+            })
+        }
+
+        if( note.user.toString() !== req.user._id.toString()){
+            return res.json({
+                success:false,
+                message:"cannot edit this note"
+
+            })
+        }
+
+        const noteDelete = note.deleteOne()
+
+        return res.json({
+            success:true,
+            message:"notes deleted successfully"
+        })
+        
+    } catch (error) {
+        return res.json({
+            success:false, 
+            message: error.message
+        })
+    }
+}
+
+
