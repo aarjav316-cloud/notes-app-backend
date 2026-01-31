@@ -55,6 +55,30 @@ export const getNotes = async (req,res) => {
 
 export const updatedNotes = async(req,res) => {
     try {
+
+       const note = await Note.findById(req.params.id)
+
+       if(!note){
+        return res.json({
+            success:false,
+            message:"notes not found"
+        })
+       }
+
+       if(note.user.toString() !== req.user._id.toString()){
+           return res.json({success:false , message:"cannot update"})
+       }
+
+       note.title = req.body.title || note.title;
+       note.content = req.body.content || note.content;
+
+       const notesUpdate = await note.save();
+
+       res.json({
+        success:true,
+        message:"notes updated successfully",
+        notesUpdate
+       })
         
     } catch (error) {
         return res.json({
@@ -63,3 +87,4 @@ export const updatedNotes = async(req,res) => {
         })
     }
 }
+
